@@ -1,4 +1,4 @@
-package at.xtools.pwawrapper.webview;
+package com.innerken.pwa_aaden_admin.webview;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -20,9 +20,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import at.xtools.pwawrapper.Constants;
-import at.xtools.pwawrapper.R;
-import at.xtools.pwawrapper.ui.UIManager;
+import com.innerken.pwa_aaden_admin.Constants;
+import com.innerken.pwa_aaden_admin.R;
+import com.innerken.pwa_aaden_admin.ui.UIManager;
 
 public class WebViewHelper {
     // Instance variables

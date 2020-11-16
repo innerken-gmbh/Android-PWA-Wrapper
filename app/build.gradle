@@ -1,19 +1,35 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    signingConfigs {
+        InnerKenJks {
+            storeFile file('innerken.jks')
+            storePassword 'asd123456'
+            keyAlias 'key0'
+            keyPassword 'asd123456'
+        }
+    }
+
+
     compileSdkVersion 28
     defaultConfig {
-        applicationId "at.xtools.pwawrapper"
+        applicationId 'at.xtools.pwawrapper'
         minSdkVersion 20
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.InnerKenJks
     }
     buildTypes {
+        debug{
+            signingConfig signingConfigs.InnerKenJks
+        }
         release {
+            signingConfig signingConfigs.InnerKenJks
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
