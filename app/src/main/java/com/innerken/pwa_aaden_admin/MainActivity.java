@@ -2,16 +2,30 @@ package com.innerken.pwa_aaden_admin;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.innerken.pwa_aaden_admin.databinding.ActivityMainBinding;
 import com.innerken.pwa_aaden_admin.ui.UIManager;
 import com.innerken.pwa_aaden_admin.webview.WebViewHelper;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
     // Globals
     private UIManager uiManager;
     private WebViewHelper webViewHelper;
+
+    private ActivityMainBinding binding;
+
+    @Inject
+    GlobalSettingManager globalSettingManager;
+
     private boolean intentHandled = false;
 
     @Override
@@ -19,11 +33,21 @@ public class MainActivity extends AppCompatActivity {
         // Setup Theme
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        setContentView(binding.getRoot());
+
+        binding.config.setOnClickListener(l -> {
+            startActivity(new Intent(this, SettingsActivity.class));
+        });
+
+        binding.back.setOnClickListener(l -> {
+            finish();
+        });
 
         // Setup Helpers
-        uiManager = new UIManager(this);
-        webViewHelper = new WebViewHelper(this, uiManager);
+        uiManager = new UIManager(this, globalSettingManager);
+        webViewHelper = new WebViewHelper(this, uiManager, globalSettingManager);
 
         // Setup App
         webViewHelper.setupWebView();
@@ -34,26 +58,27 @@ public class MainActivity extends AppCompatActivity {
             Intent i = getIntent();
             String intentAction = i.getAction();
             // Handle URLs opened in Browser
-             if (!intentHandled && intentAction != null && intentAction.equals(Intent.ACTION_VIEW)){
-                    Uri intentUri = i.getData();
-                    String intentText = "";
-                    if (intentUri != null){
-                        intentText = intentUri.toString();
-                    }
-                    // Load up the URL specified in the Intent
-                    if (!intentText.equals("")) {
-                        intentHandled = true;
-                        webViewHelper.loadIntentUrl(intentText);
-                    }
-             } else {
-                 // Load up the Web App
-                 webViewHelper.loadHome();
-             }
+            if (!intentHandled && intentAction != null && intentAction.equals(Intent.ACTION_VIEW)) {
+                Uri intentUri = i.getData();
+                String intentText = "";
+                if (intentUri != null) {
+                    intentText = intentUri.toString();
+                }
+                // Load up the URL specified in the Intent
+                if (!intentText.equals("")) {
+                    intentHandled = true;
+                    webViewHelper.loadIntentUrl(intentText);
+                }
+            } else {
+                // Load up the Web App
+                webViewHelper.loadHome();
+            }
         } catch (Exception e) {
             // Load up the Web App
             webViewHelper.loadHome();
         }
     }
+
 
     @Override
     protected void onPause() {

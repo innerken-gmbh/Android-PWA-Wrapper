@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.innerken.pwa_aaden_admin.Constants;
+import com.innerken.pwa_aaden_admin.GlobalSettingManager;
 import com.innerken.pwa_aaden_admin.R;
 
 public class UIManager {
@@ -26,20 +28,22 @@ public class UIManager {
     private LinearLayout offlineContainer;
     private boolean pageLoaded = false;
 
-    public UIManager(Activity activity) {
+
+    GlobalSettingManager globalSettingManager;
+
+    public UIManager(Activity activity, GlobalSettingManager globalSettingManager) {
         this.activity = activity;
         this.progressBar = (ProgressBar) activity.findViewById(R.id.progressBarBottom);
         this.progressSpinner = (ProgressBar) activity.findViewById(R.id.progressSpinner);
         this.offlineContainer = (LinearLayout) activity.findViewById(R.id.offlineContainer);
         this.webView = (WebView) activity.findViewById(R.id.webView);
 
+        this.globalSettingManager = globalSettingManager;
         // set click listener for offline-screen
-        offlineContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                webView.loadUrl(Constants.WEBAPP_URL);
-                setOffline(false);
-            }
+        offlineContainer.setOnClickListener(v -> {
+            Log.e("LOAD", globalSettingManager.getBaseUrl());
+            webView.loadUrl(globalSettingManager.getBaseUrl());
+            setOffline(false);
         });
     }
 

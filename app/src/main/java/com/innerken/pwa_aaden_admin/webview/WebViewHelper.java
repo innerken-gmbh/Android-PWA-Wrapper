@@ -4,11 +4,9 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +19,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.innerken.pwa_aaden_admin.Constants;
+import com.innerken.pwa_aaden_admin.GlobalSettingManager;
 import com.innerken.pwa_aaden_admin.R;
 import com.innerken.pwa_aaden_admin.ui.UIManager;
 
@@ -30,17 +29,21 @@ public class WebViewHelper {
     private UIManager uiManager;
     private WebView webView;
     private WebSettings webSettings;
+    private final GlobalSettingManager globalSettingManager;
 
-    public WebViewHelper(Activity activity, UIManager uiManager) {
+
+    public WebViewHelper(Activity activity, UIManager uiManager, GlobalSettingManager globalSettingManager) {
         this.activity = activity;
         this.uiManager = uiManager;
         this.webView = (WebView) activity.findViewById(R.id.webView);
         this.webSettings = webView.getSettings();
+        this.globalSettingManager = globalSettingManager;
     }
 
     /**
      * Simple helper method checking if connected to Network.
      * Doesn't check for actual Internet connection!
+     *
      * @return {boolean} True if connected to Network.
      */
     private boolean isNetworkAvailable() {
@@ -143,7 +146,7 @@ public class WebViewHelper {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                handleUrlLoad(view, url);
+                handleUrlLoad();
             }
 
             // handle loading error by showing the offline screen
@@ -182,10 +185,11 @@ public class WebViewHelper {
     // show "no app found" dialog
     private void showNoAppDialog(Activity thisActivity) {
         new AlertDialog.Builder(thisActivity)
-            .setTitle(R.string.noapp_heading)
-            .setMessage(R.string.noapp_description)
-            .show();
+                .setTitle(R.string.noapp_heading)
+                .setMessage(R.string.noapp_description)
+                .show();
     }
+
     // handle load errors
     private void handleLoadError(int errorCode) {
         if (errorCode != WebViewClient.ERROR_UNSUPPORTED_SCHEME) {
@@ -202,34 +206,15 @@ public class WebViewHelper {
     }
 
     // handle external urls
-    private boolean handleUrlLoad(WebView view, String url) {
+    private boolean handleUrlLoad() {
         // prevent loading content that isn't ours
-        if (!url.startsWith(Constants.WEBAPP_URL)) {
-            // stop loading
-            // stopping only would cause the PWA to freeze, need to reload the app as a workaround
-            view.stopLoading();
-            view.reload();
 
-            // open external URL in Browser/3rd party apps instead
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                if (intent.resolveActivity(activity.getPackageManager()) != null) {
-                    activity.startActivity(intent);
-                } else {
-                    showNoAppDialog(activity);
-                }
-            } catch (Exception e) {
-                showNoAppDialog(activity);
-            }
-            // return value for shouldOverrideUrlLoading
-            return true;
-        } else {
-            // let WebView load the page!
-            // activate loading animation screen
-            uiManager.setLoading(true);
-            // return value for shouldOverrideUrlLoading
-            return false;
-        }
+        // let WebView load the page!
+        // activate loading animation screen
+        uiManager.setLoading(true);
+        // return value for shouldOverrideUrlLoading
+        return false;
+
     }
 
     // handle back button press
@@ -243,7 +228,7 @@ public class WebViewHelper {
 
     // load app startpage
     public void loadHome() {
-        webView.loadUrl(Constants.WEBAPP_URL);
+        webView.loadUrl(globalSettingManager.getBaseUrl());
     }
 
     // load URL from intent
