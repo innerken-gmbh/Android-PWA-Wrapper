@@ -37,9 +37,15 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(binding.getRoot());
 
-        binding.config.setOnClickListener(l -> {
-            startActivity(new Intent(this, SettingsActivity.class));
-        });
+
+        if (!globalSettingManager.getPassword().isEmpty()) {
+            if (getIntent() == null || !getIntent().getBooleanExtra("isOk", false)) {
+                startActivity(new Intent(this, PasswordActivity.class));
+            }
+        }
+
+
+        binding.config.setOnClickListener(l -> startActivity(new Intent(this, SettingsActivity.class)));
 
         binding.back.setOnClickListener(l -> {
             finish();

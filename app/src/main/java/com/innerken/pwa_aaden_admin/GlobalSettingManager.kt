@@ -10,6 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 class GlobalSettingManager @Inject constructor(@ApplicationContext context: Context) {
+
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     companion object {
@@ -30,6 +31,10 @@ class GlobalSettingManager @Inject constructor(@ApplicationContext context: Cont
 
     fun getBaseUrl(): String {
         return "http://" + getIP() + "/" + getEndPoint() + "?Base=" + getIP()
+    }
+
+    fun getPassword(): String {
+        return prefs.getString("password", "") ?: ""
     }
 
 
