@@ -25,12 +25,20 @@ class GlobalSettingManager @Inject constructor(@ApplicationContext context: Cont
         return prefs.getString(IP, null) ?: "192.168.168.1"
     }
 
+    fun getDeviceId(): String {
+        return (prefs.getString("deviceId", null) ?: "0001").padStart(4, '0')
+    }
+
+    fun getNgrokIp(): String {
+        return "ik" + getDeviceId() + ".ngrok.aaden.io"
+    }
+
     fun getEndPoint(): String {
         return prefs.getString("endPoint", null) ?: "Admin"
     }
 
     fun getBaseUrl(): String {
-        return "http://" + getIP() + "/" + getEndPoint() + "?Base=" + getIP()
+        return "http://" + getNgrokIp() + "/" + getEndPoint() + "?Base=" + getNgrokIp()
     }
 
     fun getPassword(): String {
