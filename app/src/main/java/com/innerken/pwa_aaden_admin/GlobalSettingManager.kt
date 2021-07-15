@@ -38,7 +38,7 @@ class GlobalSettingManager @Inject constructor(@ApplicationContext context: Cont
     }
 
     fun getBaseUrl(): String {
-        return "http://" + getNgrokIp() + "/" + getEndPoint() + "?Base=" + getNgrokIp()
+        return "http://app.aaden.online/?Base=" + getNgrokIp()
     }
 
     fun getPassword(): String {

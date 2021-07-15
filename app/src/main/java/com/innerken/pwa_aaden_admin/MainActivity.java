@@ -47,9 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding.config.setOnClickListener(l -> startActivity(new Intent(this, SettingsActivity.class)));
 
-        binding.back.setOnClickListener(l -> {
-            finish();
-        });
 
         // Setup Helpers
         uiManager = new UIManager(this, globalSettingManager);
